@@ -5,6 +5,18 @@ import Cobros from './Cobros'
 import ReportesCobros from './ReportesCobros'
 import './App.css'
 
+const NOMBRES_MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+
+async function registrarInicioSesion(usuario) {
+  const ahora = new Date()
+  const mes = NOMBRES_MES[ahora.getMonth()] + ' ' + ahora.getFullYear()
+  await supabase.from('historial_sesiones').insert({
+    usuario_id: usuario.id,
+    correo: usuario.email,
+    mes
+  })
+}
+
 function App() {
   const [sesion, setSesion] = useState(null)
   const [cargando, setCargando] = useState(true)
@@ -16,8 +28,11 @@ function App() {
       setCargando(false)
     })
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       setSesion(session)
+      if (event === 'SIGNED_IN' && session) {
+        registrarInicioSesion(session.user)
+      }
     })
 
     return () => listener.subscription.unsubscribe()

@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 function ReportesCobros() {
   const [datos, setDatos] = useState([])
+  const [accesos, setAccesos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [esMovil, setEsMovil] = useState(window.innerWidth <= 480)
 
@@ -21,6 +22,14 @@ function ReportesCobros() {
         .from('clientes_cobros')
         .select('sector_barrio, categoria, balance, valor')
       if (!error) setDatos(data || [])
+
+      const { data: historial } = await supabase
+        .from('historial_sesiones')
+        .select('correo, fecha, mes, hora')
+        .order('creado_en', { ascending: false })
+        .limit(15)
+      setAccesos(historial || [])
+
       setCargando(false)
     }
     cargar()
@@ -108,6 +117,31 @@ function ReportesCobros() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <h3 className="section-title">Últimos accesos</h3>
+      <div className="card tabla-mensual-wrap">
+        <table className="tabla-mensual">
+          <thead>
+            <tr>
+              <th>Correo</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th className="col-oculta-movil">Mes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {accesos.map((a, i) => (
+              <tr key={i}>
+                <td>{a.correo}</td>
+                <td>{a.fecha}</td>
+                <td>{String(a.hora || '').slice(0, 5)}</td>
+                <td className="col-oculta-movil">{a.mes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {accesos.length === 0 && <p style={{ padding: 16, fontSize: 14, color: 'var(--tinta-suave)' }}>Aún no hay accesos registrados.</p>}
       </div>
     </div>
   )
