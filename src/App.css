@@ -29,9 +29,9 @@ body {
 }
 
 .app-shell {
-  max-width: 640px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 32px 20px 60px;
+  padding: 32px 24px 60px;
   padding-bottom: max(60px, env(safe-area-inset-bottom));
 }
 
@@ -257,14 +257,21 @@ input:focus, select:focus, textarea:focus {
 
 .tabla-mensual-wrap {
   padding: 0;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .tabla-mensual {
   width: 100%;
+  min-width: 560px;
   border-collapse: collapse;
   font-family: 'Inter', sans-serif;
   font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .tabla-mensual {
+    min-width: 0;
+  }
 }
 
 .tabla-mensual th,
