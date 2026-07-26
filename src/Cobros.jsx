@@ -68,7 +68,7 @@ function Cobros() {
     setMensaje('Guardando...')
 
     const datos = {
-      rmc: form.rmc ? Number(form.rmc) : null,
+      rmc: form.rmc ? String(form.rmc).trim() : null,
       nombre_cliente: form.nombre_cliente,
       sector_barrio: form.sector_barrio,
       calle: form.calle,
@@ -128,7 +128,7 @@ function Cobros() {
           <h3 style={{ marginTop: 0 }}>{mostrarNuevo ? 'Nuevo cliente' : 'Editar cliente'}</h3>
           <form onSubmit={guardar} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div className="form-fila">
-              <input placeholder="RMC" type="number" value={form.rmc} onChange={(e) => actualizarCampo('rmc', e.target.value)} />
+              <input placeholder="RMC" value={form.rmc} onChange={(e) => actualizarCampo('rmc', e.target.value)} />
               <input placeholder="Nombre del cliente" value={form.nombre_cliente} onChange={(e) => actualizarCampo('nombre_cliente', e.target.value)} required />
             </div>
             <div className="form-fila">
@@ -172,9 +172,9 @@ function Cobros() {
           <table className="tabla-mensual">
             <thead>
               <tr>
-                <th>RMC</th>
+                <th className="col-oculta-movil">RMC</th>
                 <th>Nombre</th>
-                <th>Sector</th>
+                <th className="col-oculta-movil">Sector</th>
                 <th>Cat.</th>
                 <th>Balance</th>
                 <th></th>
@@ -183,9 +183,9 @@ function Cobros() {
             <tbody>
               {resultados.map((c) => (
                 <tr key={c.id}>
-                  <td>{c.rmc}</td>
+                  <td className="col-oculta-movil">{c.rmc}</td>
                   <td>{c.nombre_cliente}</td>
-                  <td>{c.sector_barrio}</td>
+                  <td className="col-oculta-movil">{c.sector_barrio}</td>
                   <td>{c.categoria}</td>
                   <td style={{ color: Number(c.balance) > 0 ? 'var(--terracota)' : 'var(--verde)', fontWeight: 600 }}>
                     RD$ {Number(c.balance || 0).toFixed(2)}
