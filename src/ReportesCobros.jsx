@@ -121,7 +121,7 @@ function ReportesCobros() {
 
       <h3 className="section-title">Últimos accesos</h3>
       <div className="card tabla-mensual-wrap">
-        <table className="tabla-mensual">
+        <table className="tabla-mensual tabla-accesos">
           <thead>
             <tr>
               <th>Correo</th>

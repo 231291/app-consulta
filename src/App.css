@@ -433,6 +433,22 @@ input:focus, select:focus, textarea:focus {
     display: none;
   }
 
+  .tabla-accesos th:nth-child(1),
+  .tabla-accesos td:nth-child(1) {
+    width: 54%;
+    word-break: break-all;
+  }
+
+  .tabla-accesos th:nth-child(2),
+  .tabla-accesos td:nth-child(2) {
+    width: 28%;
+  }
+
+  .tabla-accesos th:nth-child(3),
+  .tabla-accesos td:nth-child(3) {
+    width: 18%;
+  }
+
   /* Tarjetas de métricas apiladas para que los montos no se corten */
   .metric-row {
     flex-direction: column;
