@@ -4,6 +4,7 @@ import Login from './Login'
 import Cobros from './Cobros'
 import ReportesCobros from './ReportesCobros'
 import './App.css'
+import Inspecciones from './Inspecciones'
 
 const NOMBRES_MES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
@@ -47,16 +48,15 @@ function App() {
   if (!sesion) return <Login />
 
   return (
-    <div className="app-shell">
-      <div className="app-header">
-        <h1 className="app-title">Departamentos</h1>
-        <button className="btn-ghost" onClick={cerrarSesion}>Cerrar sesión</button>
-      </div>
-
-      <div className="tabs">
+    <<div className="tabs">
         <button className={`tab ${vista === 'cobros' ? 'activo' : ''}`} onClick={() => setVista('cobros')}>Cobros</button>
         <button className={`tab ${vista === 'reportes' ? 'activo' : ''}`} onClick={() => setVista('reportes')}>Reportes</button>
+        <button className={`tab ${vista === 'inspecciones' ? 'activo' : ''}`} onClick={() => setVista('inspecciones')}>Inspecciones</button>
       </div>
+
+      {vista === 'cobros' && <Cobros usuario={sesion.user} />}
+      {vista === 'reportes' && <ReportesCobros usuario={sesion.user} />}
+      {vista === 'inspecciones' && <Inspecciones usuario={sesion.user} />}
 
       {vista === 'cobros' && <Cobros usuario={sesion.user} />}
       {vista === 'reportes' && <ReportesCobros usuario={sesion.user} />}
