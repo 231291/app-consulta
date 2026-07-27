@@ -20,6 +20,7 @@ function etiquetaTipoArea(tipo) {
   if (tipo === 'nichos_publicos') return 'Nichos públicos'
   if (tipo === 'bovedas_privadas') return 'Bóvedas privadas'
   if (tipo === 'ambos') return 'Nichos y bóvedas'
+  if (tipo === 'terreno') return 'Visita en el terreno'
   return ''
 }
 
@@ -83,11 +84,10 @@ export default function Inspecciones() {
     setGuardando(true)
     setMensaje('')
 
-    const esVertedero = sitioId === 'vertedero'
     const { error } = await supabase.from('visitas_inspeccion').insert({
       sitio_id: sitioId,
       fecha,
-      tipo_area: esVertedero ? null : tipoArea,
+      tipo_area: tipoArea,
       inspectores: inspectores.trim(),
       notas: notas.trim() || null
     })
@@ -194,15 +194,14 @@ export default function Inspecciones() {
             />
           </div>
 
-          {sitioId !== 'vertedero' && (
-            <div className="form-fila">
-              <select value={tipoArea} onChange={(e) => setTipoArea(e.target.value)} style={{ flex: 1 }}>
-                <option value="nichos_publicos">Nichos públicos</option>
-                <option value="bovedas_privadas">Bóvedas privadas</option>
-                <option value="ambos">Nichos y bóvedas</option>
-              </select>
-            </div>
-          )}
+          <div className="form-fila">
+            <select value={tipoArea} onChange={(e) => setTipoArea(e.target.value)} style={{ flex: 1 }}>
+              <option value="nichos_publicos">Nichos públicos</option>
+              <option value="bovedas_privadas">Bóvedas privadas</option>
+              <option value="ambos">Nichos y bóvedas</option>
+              <option value="terreno">Visita en el terreno</option>
+            </select>
+          </div>
 
           <div className="form-fila">
             <input
