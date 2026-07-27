@@ -23,6 +23,13 @@ function etiquetaTipoArea(tipo) {
   return ''
 }
 
+const NOMBRE_CORTO = {
+  lagunas: 'Las Lagunas',
+  ornamental: 'Ornamental',
+  guarionex: 'Guarionex',
+  vertedero: 'Vertedero'
+}
+
 export default function Inspecciones() {
   const [horario, setHorario] = useState([])
   const [visitas, setVisitas] = useState([])
@@ -98,12 +105,38 @@ export default function Inspecciones() {
 
   const sitioSeleccionado = horario.find((h) => h.sitio_id === sitioId)
 
+  function exportarCSV() {
+    const encabezados = ['Sitio', 'Fecha', 'Tipo de área', 'Inspectores', 'Notas']
+    const filas = visitas.map((v) => {
+      const s = horario.find((h) => h.sitio_id === v.sitio_id)
+      return [
+        s ? s.sitio_nombre : v.sitio_id,
+        v.fecha,
+        etiquetaTipoArea(v.tipo_area),
+        v.inspectores || '',
+        v.notas || ''
+      ]
+    })
+    const csv = [encabezados, ...filas]
+      .map((fila) => fila.map((valor) => `"${String(valor).replace(/"/g, '""')}"`).join(','))
+      .join('\n')
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+    const enlace = document.createElement('a')
+    enlace.href = URL.createObjectURL(blob)
+    enlace.download = `inspecciones_${formatoFecha(new Date())}.csv`
+    enlace.click()
+    URL.revokeObjectURL(enlace.href)
+  }
+
   return (
     <div>
-      <h2 className="section-title" style={{ marginBottom: 20 }}>Calendario semanal de inspecciones</h2>
+      <div className="comparacion-header" style={{ marginBottom: 20 }}>
+        <h2 className="section-title" style={{ marginBottom: 0 }}>Calendario semanal de inspecciones</h2>
+        <button className="btn-ghost" onClick={exportarCSV}>⬇ Exportar CSV</button>
+      </div>
 
       <div className="card" style={{ marginBottom: 24, overflowX: 'auto' }}>
-        <table className="tabla-mensual" style={{ minWidth: 640 }}>
+        <table className="tabla-mensual tabla-inspecciones" style={{ minWidth: 480 }}>
           <thead>
             <tr>
               <th>Sitio</th>
@@ -115,7 +148,7 @@ export default function Inspecciones() {
           <tbody>
             {horario.map((h) => (
               <tr key={h.sitio_id}>
-                <td>{h.sitio_nombre}</td>
+                <td>{NOMBRE_CORTO[h.sitio_id] || h.sitio_nombre}</td>
                 {diasSemana.map((d, i) => {
                   const visita = visitaEnDia(h.sitio_id, d)
                   const esPlaneado = d.getDay() === h.dia_semana
