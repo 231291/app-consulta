@@ -110,15 +110,15 @@ function Cobros() {
         <button className="btn-ghost" onClick={abrirNuevo}>+ Nuevo cliente</button>
       </div>
 
-      <form onSubmit={buscar} style={{ display: 'flex', gap: 8, marginTop: 20, marginBottom: 20 }}>
+      <form onSubmit={buscar} style={{ display: 'flex', gap: 8, marginTop: 20, marginBottom: 20, flexWrap: 'wrap' }}>
         <input
           type="text"
           placeholder="Buscar por RMC, nombre, sector, calle o teléfono..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          style={{ flex: 1 }}
+          style={{ flex: 1, minWidth: 0 }}
         />
-        <button type="submit" className="btn-principal" style={{ width: 'auto', padding: '0 20px' }} disabled={buscando}>
+        <button type="submit" className="btn-principal" style={{ width: 'auto', padding: '0 20px', flexShrink: 0 }} disabled={buscando}>
           {buscando ? 'Buscando...' : 'Buscar'}
         </button>
       </form>
