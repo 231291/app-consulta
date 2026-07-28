@@ -134,43 +134,36 @@ export default function Inspecciones() {
         <h2 className="section-title" style={{ marginBottom: 0 }}>Calendario semanal de inspecciones</h2>
         <button className="btn-ghost" onClick={exportarCSV}>⬇ Exportar CSV</button>
       </div>
-
-      <div className="card" style={{ marginBottom: 24, overflowX: 'auto' }}>
-        <table className="tabla-mensual tabla-inspecciones" style={{ minWidth: 480 }}>
-          <thead>
-            <tr>
-              <th>Sitio</th>
-              {diasSemana.map((d, i) => (
-                <th key={i}>{DIAS_CORTO[i]}<br />{d.getDate()}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {horario.map((h) => (
-              <tr key={h.sitio_id}>
-                <td>{NOMBRE_CORTO[h.sitio_id] || h.sitio_nombre}</td>
-                {diasSemana.map((d, i) => {
-                  const visita = visitaEnDia(h.sitio_id, d)
-                  const esPlaneado = d.getDay() === h.dia_semana
-                  let contenido = ''
-                  let color = 'var(--tinta-suave)'
-                  if (visita) {
-                    contenido = '✓'
-                    color = 'var(--verde)'
-                  } else if (esPlaneado) {
-                    contenido = '·'
-                    color = 'var(--bronce)'
-                  }
-                  return (
-                    <td key={i} style={{ textAlign: 'center', color, fontWeight: 600 }}>
-                      {contenido}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-         </tbody>
-        </table>
+<div className="card" style={{ marginBottom: 24 }}>
+        {horario.map((h) => (
+          <div key={h.sitio_id} className="calendario-sitio">
+            <div className="calendario-sitio-nombre">{NOMBRE_CORTO[h.sitio_id] || h.sitio_nombre}</div>
+            <div className="calendario-dias-fila">
+              {diasSemana.map((d, i) => {
+                const visita = visitaEnDia(h.sitio_id, d)
+                const esPlaneado = d.getDay() === h.dia_semana
+                let contenido = ''
+                let color = 'var(--tinta-suave)'
+                let fondo = 'var(--papel)'
+                if (visita) {
+                  contenido = '✓'
+                  color = 'var(--papel)'
+                  fondo = 'var(--verde)'
+                } else if (esPlaneado) {
+                  contenido = '·'
+                  color = 'var(--bronce)'
+                }
+                return (
+                  <div key={i} className="calendario-dia-chip" style={{ background: fondo }}>
+                    <span className="calendario-dia-etiqueta">{DIAS_CORTO[i]}</span>
+                    <span className="calendario-dia-numero">{d.getDate()}</span>
+                    <span className="calendario-dia-icono" style={{ color, fontWeight: 700 }}>{contenido}</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </div>
       <p className="mensaje-estado" style={{ marginTop: -12, marginBottom: 24 }}>
         <span style={{ color: 'var(--verde)', fontWeight: 600 }}>✓</span> visita realizada &nbsp;·&nbsp;
