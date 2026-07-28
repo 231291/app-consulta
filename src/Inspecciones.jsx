@@ -169,13 +169,13 @@ export default function Inspecciones() {
                 })}
               </tr>
             ))}
-          </tbody>
+         </tbody>
         </table>
-        <p className="mensaje-estado" style={{ marginTop: 12 }}>
-          <span style={{ color: 'var(--verde)', fontWeight: 600 }}>✓</span> visita realizada &nbsp;·&nbsp;
-          <span style={{ color: 'var(--bronce)', fontWeight: 600 }}>·</span> día planeado, pendiente
-        </p>
       </div>
+      <p className="mensaje-estado" style={{ marginTop: -12, marginBottom: 24 }}>
+        <span style={{ color: 'var(--verde)', fontWeight: 600 }}>✓</span> visita realizada &nbsp;·&nbsp;
+        <span style={{ color: 'var(--bronce)', fontWeight: 600 }}>·</span> día planeado, pendiente
+      </p>
 
       <div className="card" style={{ marginBottom: 24 }}>
         <h3 style={{ marginTop: 0 }}>Registrar visita</h3>
@@ -241,7 +241,7 @@ export default function Inspecciones() {
             const s = horario.find((h) => h.sitio_id === v.sitio_id)
             return (
               <li key={v.id} className="recibo-item">
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 600 }}>{s ? s.sitio_nombre : v.sitio_id}</div>
                   <div className="recibo-detalle">
                     {v.fecha} · {v.inspectores}
