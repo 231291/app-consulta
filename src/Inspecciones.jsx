@@ -28,9 +28,9 @@ const NOMBRE_CORTO = {
   lagunas: 'Las Lagunas',
   ornamental: 'Ornamental',
   guarionex: 'Guarionex',
-  vertedero: 'Vertedero'
+  vertedero: 'Vertedero',
+  supervision_general: 'Supervisión Gral.'
 }
-
 export default function Inspecciones() {
   const [horario, setHorario] = useState([])
   const [visitas, setVisitas] = useState([])
