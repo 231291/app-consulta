@@ -43,6 +43,7 @@ export default function Inspecciones() {
   const [tipoArea, setTipoArea] = useState('nichos_publicos')
   const [inspectores, setInspectores] = useState('')
   const [notas, setNotas] = useState('')
+  const [editandoId, setEditandoId] = useState(null)
 
   const inicioSemana = inicioDeSemana(new Date())
   const diasSemana = Array.from({ length: 7 }, (_, i) => {
@@ -53,12 +54,17 @@ export default function Inspecciones() {
 
   async function cargarDatos() {
     setCargando(true)
+    const desde = new Date()
+    desde.setDate(desde.getDate() - 90)
+    const hasta = new Date()
+    hasta.setDate(hasta.getDate() + 30)
     const [{ data: h }, { data: v }] = await Promise.all([
       supabase.from('horario_planeado_inspecciones').select('*').order('dia_semana'),
       supabase
         .from('visitas_inspeccion')
         .select('*')
-        .gte('fecha', formatoFecha(inicioSemana))
+        .gte('fecha', formatoFecha(desde))
+        .lte('fecha', formatoFecha(hasta))
         .order('fecha', { ascending: false })
     ])
     setHorario(h || [])
@@ -75,7 +81,7 @@ export default function Inspecciones() {
     return visitas.find((v) => v.sitio_id === sitio_id && v.fecha === formatoFecha(fechaDia))
   }
 
-  async function registrarVisita(e) {
+  async function guardarVisita(e) {
     e.preventDefault()
     if (!sitioId || !fecha || !inspectores.trim()) {
       setMensaje('Completa sitio, fecha e inspectores.')
@@ -84,22 +90,58 @@ export default function Inspecciones() {
     setGuardando(true)
     setMensaje('')
 
-    const { error } = await supabase.from('visitas_inspeccion').insert({
+    const datos = {
       sitio_id: sitioId,
       fecha,
       tipo_area: tipoArea,
       inspectores: inspectores.trim(),
       notas: notas.trim() || null
-    })
+    }
+
+    const { error } = editandoId
+      ? await supabase.from('visitas_inspeccion').update(datos).eq('id', editandoId)
+      : await supabase.from('visitas_inspeccion').insert(datos)
 
     setGuardando(false)
     if (error) {
       setMensaje('Error al guardar: ' + error.message)
       return
     }
-    setMensaje('Visita registrada.')
+    setMensaje(editandoId ? 'Visita actualizada.' : 'Visita registrada.')
+    cancelarEdicion()
+    cargarDatos()
+  }
+
+  function editarVisita(v) {
+    setEditandoId(v.id)
+    setSitioId(v.sitio_id)
+    setFecha(v.fecha)
+    setTipoArea(v.tipo_area || 'nichos_publicos')
+    setInspectores(v.inspectores || '')
+    setNotas(v.notas || '')
+    setMensaje('')
+  }
+
+  function cancelarEdicion() {
+    setEditandoId(null)
+    setFecha(formatoFecha(new Date()))
+    setTipoArea('nichos_publicos')
     setInspectores('')
     setNotas('')
+  }
+
+  async function eliminarVisita(id) {
+    if (!window.confirm('¿Eliminar esta visita? Esta acción no se puede deshacer.')) return
+    setGuardando(true)
+    setMensaje('')
+    const { error } = await supabase.from('visitas_inspeccion').delete().eq('id', id)
+    setGuardando(false)
+    if (error) {
+      setMensaje('Error al eliminar: ' + error.message)
+      return
+    }
+    setMensaje('Visita eliminada.')
+    if (editandoId === id) cancelarEdicion()
     cargarDatos()
   }
 
@@ -154,7 +196,13 @@ export default function Inspecciones() {
                   color = 'var(--bronce)'
                 }
                 return (
-                  <div key={i} className="calendario-dia-chip" style={{ background: fondo }}>
+                  <div
+                    key={i}
+                    className="calendario-dia-chip"
+                    style={{ background: fondo, cursor: visita ? 'pointer' : 'default' }}
+                    onClick={visita ? () => editarVisita(visita) : undefined}
+                    title={visita ? 'Editar esta visita' : undefined}
+                  >
                     <span className="calendario-dia-etiqueta">{DIAS_CORTO[i]}</span>
                     <span className="calendario-dia-numero">{d.getDate()}</span>
                     <span className="calendario-dia-icono" style={{ color, fontWeight: 700 }}>{contenido}</span>
@@ -171,8 +219,8 @@ export default function Inspecciones() {
       </p>
 
       <div className="card" style={{ marginBottom: 24 }}>
-        <h3 style={{ marginTop: 0 }}>Registrar visita</h3>
-        <form onSubmit={registrarVisita} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <h3 style={{ marginTop: 0 }}>{editandoId ? 'Editar visita' : 'Registrar visita'}</h3>
+        <form onSubmit={guardarVisita} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div className="form-fila">
             <select value={sitioId} onChange={(e) => setSitioId(e.target.value)} style={{ flex: 1 }}>
               {horario.map((h) => (
@@ -216,18 +264,33 @@ export default function Inspecciones() {
             />
           </div>
 
-          <button type="submit" className="btn-principal" disabled={guardando}>
-            {guardando ? 'Guardando...' : 'Registrar visita'}
-          </button>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button type="submit" className="btn-principal" disabled={guardando}>
+              {guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Registrar visita'}
+            </button>
+            {editandoId && (
+              <button type="button" className="btn-ghost" onClick={cancelarEdicion}>Cancelar</button>
+            )}
+            {editandoId && (
+              <button
+                type="button"
+                className="btn-eliminar"
+                onClick={() => eliminarVisita(editandoId)}
+                disabled={guardando}
+              >
+                Eliminar
+              </button>
+            )}
+          </div>
           {mensaje && <p className="mensaje-estado">{mensaje}</p>}
         </form>
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Últimas visitas</h3>
+        <h3 style={{ marginTop: 0 }}>Visitas registradas</h3>
         {cargando && <p className="mensaje-estado">Cargando...</p>}
         {!cargando && visitas.length === 0 && (
-          <div className="vacio">Todavía no hay visitas registradas esta semana.</div>
+          <div className="vacio">Todavía no hay visitas registradas.</div>
         )}
         <ul className="lista-recibo">
           {visitas.map((v) => {
@@ -241,6 +304,10 @@ export default function Inspecciones() {
                     {v.tipo_area && ` · ${etiquetaTipoArea(v.tipo_area)}`}
                   </div>
                   {v.notas && <div className="recibo-desc">{v.notas}</div>}
+                </div>
+                <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                  <button className="btn-ghost" onClick={() => editarVisita(v)}>Editar</button>
+                  <button className="btn-eliminar" onClick={() => eliminarVisita(v.id)}>Eliminar</button>
                 </div>
               </li>
             )
