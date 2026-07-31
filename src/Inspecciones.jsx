@@ -288,6 +288,7 @@ export default function Inspecciones() {
 
       <div className="card">
         <h3 style={{ marginTop: 0 }}>Visitas registradas</h3>
+        {!editandoId && mensaje && <p className="mensaje-estado">{mensaje}</p>}
         {cargando && <p className="mensaje-estado">Cargando...</p>}
         {!cargando && visitas.length === 0 && (
           <div className="vacio">Todavía no hay visitas registradas.</div>
