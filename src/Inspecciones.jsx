@@ -16,6 +16,24 @@ function formatoFecha(fecha) {
   return fecha.toISOString().slice(0, 10)
 }
 
+function formatoFechaDR(fechaISO) {
+  if (!fechaISO) return ''
+  const [anio, mes, dia] = fechaISO.split('-')
+  return `${dia}/${mes}/${anio}`
+}
+
+function formatoFechaHoraDR(timestamp) {
+  if (!timestamp) return ''
+  return new Intl.DateTimeFormat('es-DO', {
+    timeZone: 'America/Santo_Domingo',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(new Date(timestamp))
+}
+
 function etiquetaTipoArea(tipo) {
   if (tipo === 'nichos_publicos') return 'Nichos públicos'
   if (tipo === 'bovedas_privadas') return 'Bóvedas privadas'
@@ -148,15 +166,16 @@ export default function Inspecciones() {
   const sitioSeleccionado = horario.find((h) => h.sitio_id === sitioId)
 
   function exportarCSV() {
-    const encabezados = ['Sitio', 'Fecha', 'Tipo de área', 'Inspectores', 'Notas']
+    const encabezados = ['Sitio', 'Fecha', 'Tipo de área', 'Inspectores', 'Notas', 'Registrado el']
     const filas = visitas.map((v) => {
       const s = horario.find((h) => h.sitio_id === v.sitio_id)
       return [
         s ? s.sitio_nombre : v.sitio_id,
-        v.fecha,
+        formatoFechaDR(v.fecha),
         etiquetaTipoArea(v.tipo_area),
         v.inspectores || '',
-        v.notas || ''
+        v.notas || '',
+        formatoFechaHoraDR(v.creado_en)
       ]
     })
     const csv = [encabezados, ...filas]
