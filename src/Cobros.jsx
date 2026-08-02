@@ -154,6 +154,9 @@ function Cobros() {
     setForm((prev) => ({ ...prev, [campo]: valor }))
   }
 
+  const montoPorFactura = Number(form.cantidad || 0) * Number(form.valor || 0)
+  const facturasPendientes = montoPorFactura > 0 ? Number(form.balance || 0) / montoPorFactura : 0
+
   return (
     <div>
       <div className="comparacion-header">
@@ -232,6 +235,13 @@ function Cobros() {
               <input placeholder="Valor (RD$)" aria-label="Valor en pesos dominicanos" type="number" value={form.valor} onChange={(e) => actualizarCampo('valor', e.target.value)} />
               <input placeholder="Balance (RD$)" aria-label="Balance en pesos dominicanos" type="number" value={form.balance} onChange={(e) => actualizarCampo('balance', e.target.value)} />
             </div>
+            {montoPorFactura > 0 && (
+              <p className="mensaje-estado" style={{ marginTop: -4 }}>
+                Factura por período: <strong>RD$ {montoPorFactura.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+                {' '}· Facturas pendientes: <strong>{facturasPendientes.toLocaleString(undefined, { maximumFractionDigits: 1 })}</strong>
+                {' '}(cantidad × valor = factura por período; balance ÷ factura = cuántas facturas debe)
+              </p>
+            )}
             <div className="form-fila">
               <input placeholder="Inmueble" aria-label="Inmueble" value={form.inmueble} onChange={(e) => actualizarCampo('inmueble', e.target.value)} />
               <input placeholder="Teléfonos" aria-label="Teléfonos" value={form.telefonos} onChange={(e) => actualizarCampo('telefonos', e.target.value)} />
