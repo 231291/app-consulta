@@ -14,6 +14,7 @@ create table clientes_cobros (
   balance numeric,
   inmueble text,
   telefonos text,
+  agregado_manual boolean not null default false, -- true si se creó desde "+ Nuevo cliente" en la app, no del CSV importado
   actualizado_en timestamptz default now()
 );
 

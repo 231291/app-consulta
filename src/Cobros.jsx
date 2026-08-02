@@ -136,7 +136,7 @@ function Cobros() {
 
     let error
     if (mostrarNuevo) {
-      ;({ error } = await supabase.from('clientes_cobros').insert(datos))
+      ;({ error } = await supabase.from('clientes_cobros').insert({ ...datos, agregado_manual: true }))
     } else {
       ;({ error } = await supabase.from('clientes_cobros').update(datos).eq('id', seleccionado))
     }
