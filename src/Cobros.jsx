@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from './supabaseClient'
 
 const CAMPOS_VACIOS = {
@@ -7,8 +7,33 @@ const CAMPOS_VACIOS = {
   cantidad: 1, valor: '', balance: '', inmueble: '', telefonos: ''
 }
 
+const CATEGORIAS = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
+  'CEMENTERIO', 'RURAL', 'DEPARTAMENTO JURIDICO', 'FACTURA OTRO CLIENTE', 'FACTURA POR PLAZA',
+  '< PENDIENTE DE ASIGNAR >'
+]
+
+function aplicarFiltros(query, { termino, categoria, tipoCliente }) {
+  if (termino) {
+    const esNumero = /^\d+$/.test(termino)
+    if (esNumero) {
+      query = query.eq('rmc', termino)
+    } else {
+      query = query.or(
+        `nombre_cliente.ilike.%${termino}%,sector_barrio.ilike.%${termino}%,calle.ilike.%${termino}%,tipo_cliente.ilike.%${termino}%,telefonos.ilike.%${termino}%`
+      )
+    }
+  }
+  if (categoria) query = query.eq('categoria', categoria)
+  if (tipoCliente) query = query.ilike('tipo_cliente', `%${tipoCliente}%`)
+  return query
+}
+
 function Cobros() {
   const [busqueda, setBusqueda] = useState('')
+  const [filtroCategoria, setFiltroCategoria] = useState('')
+  const [filtroTipoCliente, setFiltroTipoCliente] = useState('')
+  const [tiposCliente, setTiposCliente] = useState([])
   const [resultados, setResultados] = useState([])
   const [buscando, setBuscando] = useState(false)
   const [yaBusco, setYaBusco] = useState(false)
@@ -16,6 +41,17 @@ function Cobros() {
   const [form, setForm] = useState(CAMPOS_VACIOS)
   const [mensaje, setMensaje] = useState('')
   const [mostrarNuevo, setMostrarNuevo] = useState(false)
+  const [resumenFiltro, setResumenFiltro] = useState(null)
+
+  useEffect(() => {
+    supabase
+      .from('clientes_cobros')
+      .select('tipo_cliente')
+      .then(({ data }) => {
+        const unicos = [...new Set((data || []).map((d) => d.tipo_cliente).filter(Boolean))].sort()
+        setTiposCliente(unicos)
+      })
+  }, [])
 
   async function buscar(e) {
     if (e) e.preventDefault()
@@ -23,23 +59,28 @@ function Cobros() {
     setMensaje('')
     setYaBusco(true)
 
-    const termino = busqueda.trim()
-    let query = supabase.from('clientes_cobros').select('*').order('nombre_cliente').limit(100)
+    const filtros = { termino: busqueda.trim(), categoria: filtroCategoria, tipoCliente: filtroTipoCliente }
 
-    if (termino) {
-      const esNumero = /^\d+$/.test(termino)
-      if (esNumero) {
-        query = query.eq('rmc', termino)
-      } else {
-        query = query.or(
-          `nombre_cliente.ilike.%${termino}%,sector_barrio.ilike.%${termino}%,calle.ilike.%${termino}%,tipo_cliente.ilike.%${termino}%,telefonos.ilike.%${termino}%`
-        )
-      }
-    }
-
+    let query = aplicarFiltros(
+      supabase.from('clientes_cobros').select('*').order('nombre_cliente').limit(100),
+      filtros
+    )
     const { data, error } = await query
     if (error) setMensaje('Error: ' + error.message)
     setResultados(data || [])
+
+    // Total real (sin el límite de 100) para poder comparar balances entre categorías/tipos.
+    const { data: todos } = await aplicarFiltros(
+      supabase.from('clientes_cobros').select('balance'),
+      filtros
+    )
+    if (todos) {
+      const total = todos.reduce((s, r) => s + Number(r.balance || 0), 0)
+      setResumenFiltro({ cantidad: todos.length, total })
+    } else {
+      setResumenFiltro(null)
+    }
+
     setBuscando(false)
   }
 
@@ -110,7 +151,7 @@ function Cobros() {
         <button className="btn-ghost" onClick={abrirNuevo}>+ Nuevo cliente</button>
       </div>
 
-      <form onSubmit={buscar} style={{ display: 'flex', gap: 8, marginTop: 20, marginBottom: 20, flexWrap: 'wrap' }}>
+      <form onSubmit={buscar} style={{ display: 'flex', gap: 8, marginTop: 20, marginBottom: 10, flexWrap: 'wrap' }}>
         <input
           type="text"
           placeholder="Buscar por RMC, nombre, sector, calle o teléfono..."
@@ -119,10 +160,42 @@ function Cobros() {
           onChange={(e) => setBusqueda(e.target.value)}
           style={{ flex: 1, minWidth: 0 }}
         />
+        <select
+          value={filtroCategoria}
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+          aria-label="Filtrar por categoría"
+          style={{ maxWidth: 200 }}
+        >
+          <option value="">Todas las categorías</option>
+          {CATEGORIAS.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+        <input
+          list="lista-tipos-cliente"
+          type="text"
+          placeholder="Filtrar por tipo de cliente..."
+          aria-label="Filtrar por tipo de cliente"
+          value={filtroTipoCliente}
+          onChange={(e) => setFiltroTipoCliente(e.target.value)}
+          style={{ maxWidth: 220 }}
+        />
+        <datalist id="lista-tipos-cliente">
+          {tiposCliente.map((t) => (
+            <option key={t} value={t} />
+          ))}
+        </datalist>
         <button type="submit" className="btn-principal" style={{ width: 'auto', padding: '0 20px', flexShrink: 0 }} disabled={buscando}>
           {buscando ? 'Buscando...' : 'Buscar'}
         </button>
       </form>
+
+      {resumenFiltro && (
+        <p className="mensaje-estado" style={{ marginTop: 0, marginBottom: 20 }}>
+          {resumenFiltro.cantidad.toLocaleString()} cliente{resumenFiltro.cantidad === 1 ? '' : 's'} coinciden ·
+          balance total: <strong>RD$ {resumenFiltro.total.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+        </p>
+      )}
 
       {seleccionado && (
         <div className="card" style={{ marginBottom: 24 }}>
