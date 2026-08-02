@@ -241,7 +241,7 @@ export default function Inspecciones() {
         <h3 style={{ marginTop: 0 }}>{editandoId ? 'Editar visita' : 'Registrar visita'}</h3>
         <form onSubmit={guardarVisita} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           <div className="form-fila">
-            <select value={sitioId} onChange={(e) => setSitioId(e.target.value)} style={{ flex: 1 }}>
+            <select value={sitioId} onChange={(e) => setSitioId(e.target.value)} aria-label="Sitio" style={{ flex: 1 }}>
               {horario.map((h) => (
                 <option key={h.sitio_id} value={h.sitio_id}>{h.sitio_nombre}</option>
               ))}
@@ -250,12 +250,13 @@ export default function Inspecciones() {
               type="date"
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
+              aria-label="Fecha de la visita"
               style={{ flex: 1 }}
             />
           </div>
 
           <div className="form-fila">
-            <select value={tipoArea} onChange={(e) => setTipoArea(e.target.value)} style={{ flex: 1 }}>
+            <select value={tipoArea} onChange={(e) => setTipoArea(e.target.value)} aria-label="Tipo de área" style={{ flex: 1 }}>
               <option value="nichos_publicos">Nichos públicos</option>
               <option value="bovedas_privadas">Bóvedas privadas</option>
               <option value="ambos">Nichos y bóvedas</option>
@@ -267,6 +268,7 @@ export default function Inspecciones() {
             <input
               type="text"
               placeholder="Nombres de quienes hacen la visita"
+              aria-label="Inspectores"
               value={inspectores}
               onChange={(e) => setInspectores(e.target.value)}
               style={{ flex: 1, minWidth: 0 }}
@@ -276,6 +278,7 @@ export default function Inspecciones() {
           <div className="form-fila">
             <textarea
               placeholder="Notas (opcional)"
+              aria-label="Notas"
               value={notas}
               onChange={(e) => setNotas(e.target.value)}
               rows={2}

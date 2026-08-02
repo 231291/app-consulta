@@ -114,6 +114,7 @@ function Cobros() {
         <input
           type="text"
           placeholder="Buscar por RMC, nombre, sector, calle o teléfono..."
+          aria-label="Buscar cliente"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           style={{ flex: 1, minWidth: 0 }}
@@ -128,26 +129,26 @@ function Cobros() {
           <h3 style={{ marginTop: 0 }}>{mostrarNuevo ? 'Nuevo cliente' : 'Editar cliente'}</h3>
           <form onSubmit={guardar} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <div className="form-fila">
-              <input placeholder="RMC" value={form.rmc} onChange={(e) => actualizarCampo('rmc', e.target.value)} />
-              <input placeholder="Nombre del cliente" value={form.nombre_cliente} onChange={(e) => actualizarCampo('nombre_cliente', e.target.value)} required />
+              <input placeholder="RMC" aria-label="RMC" value={form.rmc} onChange={(e) => actualizarCampo('rmc', e.target.value)} />
+              <input placeholder="Nombre del cliente" aria-label="Nombre del cliente" value={form.nombre_cliente} onChange={(e) => actualizarCampo('nombre_cliente', e.target.value)} required />
             </div>
             <div className="form-fila">
-              <input placeholder="Sector / Barrio" value={form.sector_barrio} onChange={(e) => actualizarCampo('sector_barrio', e.target.value)} />
-              <input placeholder="Calle" value={form.calle} onChange={(e) => actualizarCampo('calle', e.target.value)} />
-              <input placeholder="No." value={form.numero} onChange={(e) => actualizarCampo('numero', e.target.value)} />
+              <input placeholder="Sector / Barrio" aria-label="Sector / Barrio" value={form.sector_barrio} onChange={(e) => actualizarCampo('sector_barrio', e.target.value)} />
+              <input placeholder="Calle" aria-label="Calle" value={form.calle} onChange={(e) => actualizarCampo('calle', e.target.value)} />
+              <input placeholder="No." aria-label="Número" value={form.numero} onChange={(e) => actualizarCampo('numero', e.target.value)} />
             </div>
             <div className="form-fila">
-              <input placeholder="Tipo de cliente" value={form.tipo_cliente} onChange={(e) => actualizarCampo('tipo_cliente', e.target.value)} />
-              <input placeholder="Categoría (A-J)" value={form.categoria} onChange={(e) => actualizarCampo('categoria', e.target.value)} maxLength={2} style={{ maxWidth: 120 }} />
+              <input placeholder="Tipo de cliente" aria-label="Tipo de cliente" value={form.tipo_cliente} onChange={(e) => actualizarCampo('tipo_cliente', e.target.value)} />
+              <input placeholder="Categoría (A-J)" aria-label="Categoría" value={form.categoria} onChange={(e) => actualizarCampo('categoria', e.target.value)} maxLength={2} style={{ maxWidth: 120 }} />
             </div>
             <div className="form-fila">
-              <input placeholder="Cantidad" type="number" value={form.cantidad} onChange={(e) => actualizarCampo('cantidad', e.target.value)} />
-              <input placeholder="Valor (RD$)" type="number" value={form.valor} onChange={(e) => actualizarCampo('valor', e.target.value)} />
-              <input placeholder="Balance (RD$)" type="number" value={form.balance} onChange={(e) => actualizarCampo('balance', e.target.value)} />
+              <input placeholder="Cantidad" aria-label="Cantidad" type="number" value={form.cantidad} onChange={(e) => actualizarCampo('cantidad', e.target.value)} />
+              <input placeholder="Valor (RD$)" aria-label="Valor en pesos dominicanos" type="number" value={form.valor} onChange={(e) => actualizarCampo('valor', e.target.value)} />
+              <input placeholder="Balance (RD$)" aria-label="Balance en pesos dominicanos" type="number" value={form.balance} onChange={(e) => actualizarCampo('balance', e.target.value)} />
             </div>
             <div className="form-fila">
-              <input placeholder="Inmueble" value={form.inmueble} onChange={(e) => actualizarCampo('inmueble', e.target.value)} />
-              <input placeholder="Teléfonos" value={form.telefonos} onChange={(e) => actualizarCampo('telefonos', e.target.value)} />
+              <input placeholder="Inmueble" aria-label="Inmueble" value={form.inmueble} onChange={(e) => actualizarCampo('inmueble', e.target.value)} />
+              <input placeholder="Teléfonos" aria-label="Teléfonos" value={form.telefonos} onChange={(e) => actualizarCampo('telefonos', e.target.value)} />
             </div>
             <div style={{ display: 'flex', gap: 10 }}>
               <button type="submit" className="btn-principal">Guardar</button>

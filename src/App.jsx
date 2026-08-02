@@ -54,15 +54,38 @@ function App() {
         <button className="btn-ghost" onClick={cerrarSesion}>Cerrar sesión</button>
       </div>
 
-      <div className="tabs">
-        <button className={`tab ${vista === 'cobros' ? 'activo' : ''}`} onClick={() => setVista('cobros')}>Cobros</button>
-        <button className={`tab ${vista === 'reportes' ? 'activo' : ''}`} onClick={() => setVista('reportes')}>Reportes</button>
-        <button className={`tab ${vista === 'inspecciones' ? 'activo' : ''}`} onClick={() => setVista('inspecciones')}>Inspecciones</button>
+      <div className="tabs" role="tablist" aria-label="Secciones">
+        <button
+          className={`tab ${vista === 'cobros' ? 'activo' : ''}`}
+          onClick={() => setVista('cobros')}
+          role="tab"
+          aria-selected={vista === 'cobros'}
+        >
+          Cobros
+        </button>
+        <button
+          className={`tab ${vista === 'reportes' ? 'activo' : ''}`}
+          onClick={() => setVista('reportes')}
+          role="tab"
+          aria-selected={vista === 'reportes'}
+        >
+          Reportes
+        </button>
+        <button
+          className={`tab ${vista === 'inspecciones' ? 'activo' : ''}`}
+          onClick={() => setVista('inspecciones')}
+          role="tab"
+          aria-selected={vista === 'inspecciones'}
+        >
+          Inspecciones
+        </button>
       </div>
 
-      {vista === 'cobros' && <Cobros usuario={sesion.user} />}
-      {vista === 'reportes' && <ReportesCobros usuario={sesion.user} />}
-      {vista === 'inspecciones' && <Inspecciones usuario={sesion.user} />}
+      <div role="tabpanel">
+        {vista === 'cobros' && <Cobros usuario={sesion.user} />}
+        {vista === 'reportes' && <ReportesCobros usuario={sesion.user} />}
+        {vista === 'inspecciones' && <Inspecciones usuario={sesion.user} />}
+      </div>
     </div>
   )
 }

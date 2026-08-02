@@ -170,6 +170,12 @@ input, select, textarea {max-width: 100%;
 input:focus, select:focus, textarea:focus {
   outline: none;
   border-color: var(--bronce);
+  box-shadow: 0 0 0 3px rgba(181, 121, 60, 0.25);
+}
+
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--bronce);
+  outline-offset: 2px;
 }
 
 .btn-principal {

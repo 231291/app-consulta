@@ -78,7 +78,12 @@ function ReportesCobros() {
       </p>
 
       <h3 className="section-title">Top 12 sectores con más balance pendiente</h3>
-      <div className="card" style={{ marginTop: 12, marginBottom: 24 }}>
+      <div
+        className="card"
+        style={{ marginTop: 12, marginBottom: 24 }}
+        role="img"
+        aria-label={'Gráfico de barras: ' + filasSector.map((f) => f.sector + ' RD$ ' + Math.round(f.balance).toLocaleString()).join(', ')}
+      >
         <ResponsiveContainer width="100%" height={esMovil ? 260 : 320}>
           <BarChart data={filasSector} layout="vertical" margin={{ top: 5, right: 20, bottom: 5, left: esMovil ? 5 : 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--raya)" />
