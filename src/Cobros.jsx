@@ -84,6 +84,16 @@ function Cobros() {
     setBuscando(false)
   }
 
+  function limpiarBusqueda() {
+    setBusqueda('')
+    setFiltroCategoria('')
+    setFiltroTipoCliente('')
+    setResultados([])
+    setResumenFiltro(null)
+    setYaBusco(false)
+    setMensaje('')
+  }
+
   function abrirCliente(cliente) {
     setSeleccionado(cliente.id)
     setForm({ ...cliente })
@@ -187,6 +197,9 @@ function Cobros() {
         </datalist>
         <button type="submit" className="btn-principal" style={{ width: 'auto', padding: '0 20px', flexShrink: 0 }} disabled={buscando}>
           {buscando ? 'Buscando...' : 'Buscar'}
+        </button>
+        <button type="button" className="btn-ghost" onClick={limpiarBusqueda} disabled={buscando}>
+          Limpiar
         </button>
       </form>
 
