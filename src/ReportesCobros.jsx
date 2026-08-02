@@ -40,6 +40,8 @@ function ReportesCobros() {
   const totalClientes = datos.length
   const totalBalance = datos.reduce((s, d) => s + Number(d.balance || 0), 0)
   const clientesConDeuda = datos.filter((d) => Number(d.balance || 0) > 0).length
+  const clientesAlDia = totalClientes - clientesConDeuda
+  const porcentajeAlDia = totalClientes ? (clientesAlDia / totalClientes) * 100 : 0
 
   const porCategoria = {}
   datos.forEach((d) => {
@@ -71,6 +73,13 @@ function ReportesCobros() {
         <div className="metric-card" style={{ borderLeftColor: 'var(--terracota)' }}>
           <p className="metric-label">BALANCE PENDIENTE TOTAL</p>
           <p className="metric-monto" style={{ color: 'var(--terracota)' }}>RD$ {totalBalance.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+        </div>
+        <div className="metric-card" style={{ borderLeftColor: 'var(--verde)' }}>
+          <p className="metric-label">AL DÍA</p>
+          <p className="metric-monto" style={{ color: 'var(--verde)' }}>{clientesAlDia.toLocaleString()}</p>
+          <p style={{ fontSize: 12, color: 'var(--tinta-suave)', margin: '6px 0 0' }}>
+            {porcentajeAlDia.toLocaleString(undefined, { maximumFractionDigits: 1 })}% de la base
+          </p>
         </div>
       </div>
       <p style={{ fontSize: 14, color: 'var(--tinta-suave)', marginTop: -12, marginBottom: 24 }}>
