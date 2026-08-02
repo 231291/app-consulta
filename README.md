@@ -1,9 +1,10 @@
 # App de Consulta - Departamentos
 
 ## Qué incluye este proyecto
-- App en React + Vite, con login para el personal.
+- App en React + Vite, con login para el personal (sin auto-registro — las cuentas se crean a mano desde Supabase).
 - Pestaña **Cobros**: buscar clientes (por RMC, nombre, sector, teléfono), ver su balance, y editar o agregar registros.
 - Pestaña **Reportes**: resumen total de clientes y balance pendiente, gráfico de los sectores con más deuda, y tabla por categoría.
+- Pestaña **Inspecciones**: calendario semanal de visitas, con registrar/editar/eliminar y exportación a CSV y a Google Sheets.
 - `esquema_cobros.sql`: crea la tabla `clientes_cobros` en Supabase, con índices y seguridad (solo personal con sesión iniciada puede ver/editar).
 - `clientes_cobros.csv`: los 6,808 clientes ya limpios y listos para importar.
 
@@ -16,9 +17,15 @@
 5. Renombra `.env.example` a `.env` y pega ahí esos dos valores.
 6. Corre `npm install` y luego `npm run dev` para probarlo localmente.
 7. Cuando quieras publicarlo: sube el proyecto a GitHub y conéctalo a Vercel (igual que hicimos con la app de finanzas), agregando esas mismas dos variables de entorno en la configuración de Vercel.
+8. En **Authentication → Sign In / Providers**, confirma que "Allow new users to sign up" esté **desactivado** — las cuentas del personal se crean a mano en **Authentication → Users → Add user**.
 
-## Pendiente
-- Agregar la tabla y pestaña de **Inspecciones/Fiscalización** cuando se comparta esa base de datos.
+## Monitoreo de errores (opcional, recomendado)
+
+Sin esto, si algo falla no te enteras hasta que el usuario se queje.
+
+1. Crea una cuenta gratis en [sentry.io](https://sentry.io) y un proyecto tipo **React**.
+2. Copia el **DSN** y agrégalo como variable de entorno `VITE_SENTRY_DSN` (local en `.env`, o en Vercel → Environment Variables).
+3. Sin esa variable, la app funciona igual — solo que no manda nada a Sentry.
 
 ## Sincronizar desde Google Sheets (pegar y actualizar)
 
