@@ -50,7 +50,10 @@ function App() {
   return (
     <div className="app-shell">
       <div className="app-header">
-        <h1 className="app-title">Departamentos</h1>
+        <div className="app-brand">
+          <img src="/icon.svg" alt="" className="app-logo" width="32" height="32" />
+          <h1 className="app-title">Departamentos</h1>
+        </div>
         <button className="btn-ghost" onClick={cerrarSesion}>Cerrar sesión</button>
       </div>
 

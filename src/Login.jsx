@@ -20,6 +20,7 @@ function Login() {
 
   return (
     <div className="login-shell">
+      <img src="/icon.svg" alt="Consulta de Departamentos" className="login-logo" width="56" height="56" />
       <p className="login-eyebrow">Consulta interna</p>
       <h1 className="login-title">Departamentos</h1>
 

@@ -43,6 +43,19 @@ body {
   gap: 16px;
 }
 
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.app-logo {
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: block;
+}
+
 .app-title {
   font-family: 'Inter', sans-serif;
   font-size: 22px;
@@ -383,6 +396,12 @@ button:focus-visible, a:focus-visible {
   max-width: 360px;
   margin: 90px auto;
   padding: 0 20px;
+}
+.login-logo {
+  display: block;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  box-shadow: var(--sombra);
 }
 .login-eyebrow {
   font-size: 12px;
